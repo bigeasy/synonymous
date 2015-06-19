@@ -1,0 +1,34 @@
+{
+    "name":             "synonymous",
+    "version":          "9.9.9",
+    "author":           "Alan Gutierrez <alan@prettyrobots.com>",
+    "description":      "Minimalist i81n.",
+    "keywords":
+    [
+                        "internationalization", "localization", "i18n", "i10n",
+                        "strings"
+    ],
+    "main":             "synonymous",
+    "contributors":     [],
+    "homepage":         "https://github.com/bigeasy/synonymous",
+    "bugs":             "https://github.com/bigeasy/synonymous/issues",
+    "license":          "MIT",
+    "main":             "synonymous",
+    "repository":
+    {
+                        "type": "git",
+                        "url": "http://github.com/bigeasy/synonymous.git"
+    },
+    "dependencies":
+    {
+                        "abend":                "0.0.0"
+    },
+    "devDependencies":
+    {
+                        "proof":                "0.0.52"
+    },
+    "scripts":
+    {
+                        "test": "proof platform win32 && proof test */*/*.t.js || t/test"
+    }
+}
