@@ -14,6 +14,7 @@ require('proof')(6, prove)
     options:
         --foo
     ___ usage$ ___
+
         multi line:
           One line.
 
@@ -24,6 +25,7 @@ require('proof')(6, prove)
 
         main message:
           This is the main message: %s.
+
     ___ usage, "string with \"" ___ en_US ___
     x
     ___ usage ___ en_GB ___
