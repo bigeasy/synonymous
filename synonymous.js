@@ -1,9 +1,13 @@
+var STRING = /^(\s*)([^:(]+)(?:\((\d+(?:\s*,\s*\d+)*)\))?:\s*(.*)$/
+var DELIMITER = /^(\s*)___\s+((?:\w[\w\d]+\$?)(?:\s*,\s*(?:[\w\d]+|"(?:[^"\\]*(?:\\.[^"\\]*)*)"))*)\s+(?:___\s+((?:[a-z]{2}_[A-Z]{2})(?:\s*,\s*[a-z]{2}_[A-Z]{2})*)\s+)?___\s*$/
+var PARAMETER = /^(?:(\w[\w\d]+)|("(?:[^"\\]*(?:\\.[^"\\]*)*)"))\s*(?:,\s*(.*))?$/
+
 // Extract message strings from the strings section of a usage message.
 function strings (lines) {
     var i, I, j, J, $, spaces, key, order, line, message = [], dedent = Number.MAX_VALUE, strings = {}
 
     OUTER: for (i = 0, I = lines.length; i < I; i++) {
-        if (($ = /^(\s*)([^:(]+)(?:\((\d+(?:\s*,\s*\d+)*)\))?:\s*(.*)$/.exec(lines[i]))) {
+        if (($ = STRING.exec(lines[i]))) {
             spaces = $[1].length, key = $[2].trim(), order = $[3] || '1', line = $[4], message = []
             if (line.length) message.push(line)
             for (i++; i < I; i++) {
@@ -25,9 +29,6 @@ function strings (lines) {
 
     return strings
 }
-
-var DELIMITER = /^(\s*)___\s+((?:\w[\w\d]+\$?)(?:\s*,\s*(?:[\w\d]+|"(?:[^"\\]*(?:\\.[^"\\]*)*)"))*)\s+(?:___\s+((?:[a-z]{2}_[A-Z]{2})(?:\s*,\s*[a-z]{2}_[A-Z]{2})*)\s+)?___\s*$/
-var PARAMETER = /^(?:(\w[\w\d]+)|("(?:[^"\\]*(?:\\.[^"\\]*)*)"))\s*(?:,\s*(.*))?$/
 
 function redux (source) {
     var dictionary = {}, lines = source.split(/\r?\n/), text, $
