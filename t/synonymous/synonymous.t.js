@@ -4,7 +4,7 @@ usage: synonymous <options> file1 file2\n\
 options:\n\
     --foo'
 
-require('proof')(6, prove)
+require('proof')(10, prove)
 
 /*
 
@@ -24,7 +24,13 @@ require('proof')(6, prove)
         following: Message follows label.
 
         main message:
-          This is the main message: %s.
+          This is the main message: %s => %d.
+
+        named parameters(key, value):
+          Here are some named parameters: %s => %d && %d.
+
+        plural(number, number):
+          There are %d number%{:s}.
 
     ___ usage, "string with \"" ___ en_US ___
     x
@@ -46,8 +52,20 @@ function prove (assert) {
     assert(dictionary.getText('en_US', [ 'usage', 'string with "' ]), 'x', 'double quoted text')
     assert(dictionary.getText('en_US', [ 'usage', 'foo' ]), null, 'text not found')
     assert(dictionary.getString('en_US', [ 'usage', 'sub' ], 'main message'), {
-        text: 'This is the main message: %s.', order: [ '1' ]
+        text: 'This is the main message: %s => %d.', order: [ '1' ]
     }, 'string found')
     assert(dictionary.getString('en_US', [ 'usage', 'foo' ], 'main message'), null, 'string path not found')
     assert(dictionary.getString('en_US', [ 'usage', 'sub' ], 'x'), null, 'string not found')
+    assert(dictionary.getString('en_US', [ 'usage', 'sub' ], 'named parameters'), {
+        text: 'Here are some named parameters: %s => %d && %d.',
+        order: [ 'key', 'value' ]
+    }, 'string not found')
+    assert(dictionary.format('en_US', [ 'usage', 'sub' ], 'named parameters', {
+        key: 'a', value: 1, fred: 2
+    }), 'Here are some named parameters: a => 1 && 2.', 'format')
+    assert(dictionary.format('en_US', [ 'usage', 'sub' ], 'main message', [
+        'a', 1
+    ]), 'This is the main message: a => 1.', 'format')
+    assert(dictionary.format('en_US', [ 'usage', 'sub' ], 'main message', 'a', 1),
+        'This is the main message: a => 1.', 'format')
 }

@@ -1,4 +1,7 @@
-var STRING = /^(\s*)([^:(]+)(?:\((\d+(?:\s*,\s*\d+)*)\))?:\s*(.*)$/
+var sprintf = require('sprintf')
+var slice = [].slice
+
+var STRING = /^(\s*)([^:(]+)(?:\((\d+(?:\s*,\s*\d+)*)\)|\((\w[\w\d]*(?:\s*,\s*\w[\w\d]*)*)\))?:\s*(.*)$/
 var DELIMITER = /^(\s*)___\s+((?:\w[\w\d]+\$?)(?:\s*,\s*(?:[\w\d]+|"(?:[^"\\]*(?:\\.[^"\\]*)*)"))*)\s+(?:___\s+((?:[a-z]{2}_[A-Z]{2})(?:\s*,\s*[a-z]{2}_[A-Z]{2})*)\s+)?___\s*$/
 var PARAMETER = /^(?:(\w[\w\d]+)|("(?:[^"\\]*(?:\\.[^"\\]*)*)"))\s*(?:,\s*(.*))?$/
 
@@ -8,7 +11,7 @@ function strings (lines) {
 
     OUTER: for (i = 0, I = lines.length; i < I; i++) {
         if (($ = STRING.exec(lines[i]))) {
-            spaces = $[1].length, key = $[2].trim(), order = $[3] || '1', line = $[4], message = []
+            spaces = $[1].length, key = $[2].trim(), order = $[3] || $[4] || '1', line = $[5], message = []
             if (line.length) message.push(line)
             for (i++; i < I; i++) {
                 if (/\S/.test(lines[i])) {
@@ -114,6 +117,27 @@ Dictionary.prototype.getString = function (language, path, key) {
         }
     }
     return branch.text.strings[key] || null
+}
+
+Dictionary.prototype.format = function (language, path, key) {
+    var vargs = slice.call(arguments, 3), args, keys
+    var string = this.getString(language, path, key)
+    if (typeof vargs[0] === 'object') {
+        vargs = vargs[0]
+    }
+    if (Array.isArray(vargs)) {
+        args = vargs.map(function (_, index) {
+            var order = string.order[index] || ''
+            return vargs[/^\d+$/.test(order) ? order - 1 : index]
+        })
+    } else {
+        keys = Object.keys(vargs)
+        args = keys.map(function (_, index) {
+            var order = string.order[index]
+            return vargs[order ? order : keys[index]]
+        })
+    }
+    return sprintf.apply(null, [ string.text].concat(args))
 }
 
 module.exports = redux
