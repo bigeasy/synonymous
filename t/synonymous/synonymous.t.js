@@ -13,7 +13,7 @@ require('proof')(6, prove)
 
     options:
         --foo
-    ___ usage$ ___
+    _$_ usage, sub ___ en_US ___ n == 2 ? 1 : 0 ___
 
         multi line:
           One line.
