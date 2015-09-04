@@ -119,7 +119,7 @@ Dictionary.prototype.getText = function (language, path) {
 }
 
 Dictionary.prototype.getString = function (language, path, key) {
-    return this._getBranch(language, path).strings[key]
+    return this._getBranch(language, path).strings[key] || null
 }
 
 Dictionary.prototype.getKeys = function (language, path) {
