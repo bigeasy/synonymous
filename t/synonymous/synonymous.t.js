@@ -33,7 +33,7 @@ require('proof')(13, prove)
           Here are some named parameters: %s => %d && %d.
 
         plural(number, number):
-          There are %d number%{:s}.
+          There are %d %(number/numbers).
 
     ___ usage, "string with \"" ___ en_US ___
     x
