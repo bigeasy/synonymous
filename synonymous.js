@@ -1,13 +1,14 @@
 var sprintf = require('sprintf')
 var slice = [].slice
+var assert = require('assert')
 
 var STRING = /^(\s*)([^:(]+)(?:\((\d+(?:\s*,\s*\d+)*)\)|\((\w[\w\d]*(?:\s*,\s*\w[\w\d]*)*)\))?:\s*(.*)$/
-var DELIMITER = /^(\s*)___\s+((?:\w[\w\d]+\$?)(?:\s*,\s*(?:[\w\d]+|"(?:[^"\\]*(?:\\.[^"\\]*)*)"))*)\s+(?:___\s+((?:[a-z]{2}_[A-Z]{2})(?:\s*,\s*[a-z]{2}_[A-Z]{2})*)\s+)?___\s*$/
-var PARAMETER = /^(?:(\w[\w\d]+)|("(?:[^"\\]*(?:\\.[^"\\]*)*)"))\s*(?:,\s*(.*))?$/
+var DELIMITER = /^(?:(\s*)___\s+((?:\d+|\w[\w\d]+|\$)(?:\s*,\s*(?:\d+|[\w\d]+|"(?:[^"\\]*(?:\\.[^"\\]*)*)"|\$))*)\s+___\s+((?:[a-z]{2}_[A-Z]{2})(?:\s*,\s*[a-z]{2}_[A-Z]{2})*)\s+___\s*|(\s*)___\s+___\s+___\s*)$/
+var PARAMETER = /^(?:(\w[\w\d]+|\$)|("(?:[^"\\]*(?:\\.[^"\\]*)*)"))\s*(?:,\s*(.*))?$/
 
 // Extract message strings from the strings section of a usage message.
-function strings (lines) {
-    var i, I, j, J, $, spaces, key, order, line, message = [], dedent = Number.MAX_VALUE, strings = {}
+function strings (strings, lines) {
+    var i, I, j, J, $, spaces, key, order, line, message = [], dedent = Number.MAX_VALUE
 
     OUTER: for (i = 0, I = lines.length; i < I; i++) {
         if (($ = STRING.exec(lines[i]))) {
@@ -33,90 +34,93 @@ function strings (lines) {
     return strings
 }
 
-function redux (source) {
-    var dictionary = {}, lines = source.split(/\r?\n/), text, $
+function createDictionary (source) {
+    var $
+    var dictionary = new Dictionary
+    var lines = source.split(/\r?\n/)
+    var areStrings
+    var text
     for (var i = 0, I = lines.length; i < I; i++) {
         if ($ = DELIMITER.exec(lines[i])) {
+            var spaces = $[1] || $[4], terminator = !! $[4]
             if (text) {
-                if (Array.isArray(text.strings)) {
-                    text.strings = strings(text.strings)
-                } else {
-                    text.body = text.body.join('\n')
+                if (spaces.length > indent) {
+                    text.push(lines[i].substring(indent))
+                    continue
                 }
-                text.languages.forEach(function (language) {
-                    var tree = dictionary[language]
-                    if (!tree) {
-                        tree = dictionary[language] = { branches: {}, name: language }
+                languages.forEach(function (language) {
+                    var branch = dictionary._getBranch(language, vargs, true)
+                    if (areStrings) {
+                        strings(branch.strings, text)
+                    } else {
+                        branch.body = text.join('\n')
                     }
-                    [ text.name ].concat(text.vargs).forEach(function (varg) {
-                        var branch = tree.branches[varg]
-                        if (!branch) {
-                            branch = tree.branches[varg] = { name: varg, branches: {} }
-                        }
-                        tree = branch
-                    })
-                    tree.text = text
-                })
+                }, this)
+                indent = -1
+                text = null
+            }
+            if (terminator) {
+                continue
             }
             var vargs = [], indent = $[1].length,
                 parameters = $[2], languages = $[3]
-            $ = /^(\w[\w\d]+)(\$)?(?:\s*,\s*(.*))?$/.exec(parameters)
-            var name = $[1], areStrings = $[2], parameters = $[3] || ''
             while (parameters.length) {
                 $ = PARAMETER.exec(parameters)
                 vargs.push($[1] ? $[1] : JSON.parse($[2]))
                 parameters = $[3] || ''
             }
-            if (areStrings && text.name === name) {
-                text.strings = []
-            } else if (languages) {
-                languages = languages.split(/\s*,\s*/)
-                text = {
-                    indent: indent,
-                    name: name,
-                    vargs: vargs,
-                    languages: languages,
-                    body: [],
+            if (areStrings = vargs[vargs.length - 1] == '$') {
+                vargs.pop()
+            }
+            assert(vargs.every(function (arg) { return arg != '$' }), 'invalid argument')
+            languages = languages.split(/\s*,\s*/)
+            text = []
+        } else if (text) {
+            text.push(lines[i].substring(indent))
+        }
+    }
+    return dictionary
+}
+
+function Dictionary () {
+    this._languages = {}
+}
+
+Dictionary.prototype._getBranch = function (language, path, create) {
+    var branch = this._languages[language], child
+    if (!branch) {
+        if (create) {
+            branch = this._languages[language] = { branches: {}, name: language }
+        } else {
+            return { body: null, strings: {} }
+        }
+    }
+    for (var i = 0, I = path.length; i < I; i++) {
+        child = branch.branches[path[i]]
+        if (!child) {
+            if (create) {
+                child = branch.branches[path[i]] = {
+                    name: path[i],
+                    branches: {},
+                    body: null,
                     strings: {}
                 }
             } else {
-                text = null
-            }
-        } else if (text) {
-            if (Array.isArray(text.strings)) {
-                text.strings.push(lines[i].substring(indent))
-            } else {
-                text.body.push(lines[i].substring(indent))
+                return { body: null, strings: {} }
             }
         }
+        branch = child
     }
-    return new Dictionary(dictionary)
-}
-
-function Dictionary (root) {
-    this._root = root
+    return branch
 }
 
 Dictionary.prototype.getText = function (language, path) {
-    var branch = this._root[language]
-    for (var i = 0, I = path.length; i < I; i++) {
-        branch = branch.branches[path[i]]
-        if (!branch) {
-            return null
-        }
-    }
-    return branch.text.body
+    return this._getBranch(language, path).body
 }
 
 Dictionary.prototype.getString = function (language, path, key) {
-    var branch = this._root[language]
-    for (var i = 0, I = path.length; i < I; i++) {
-        branch = branch.branches[path[i]]
-        if (!branch) {
-            return null
-        }
-    }
-    return branch.text.strings[key] || null
+    var branch = this._getBranch(language, path)
+    return branch.strings[key] || null
 }
 
 Dictionary.prototype.format = function (language, path, key) {
@@ -140,4 +144,4 @@ Dictionary.prototype.format = function (language, path, key) {
     return sprintf.apply(null, [ string.text].concat(args))
 }
 
-module.exports = redux
+module.exports = createDictionary

@@ -4,7 +4,7 @@ usage: synonymous <options> file1 file2\n\
 options:\n\
     --foo'
 
-require('proof')(10, prove)
+require('proof')(13, prove)
 
 /*
 
@@ -13,7 +13,7 @@ require('proof')(10, prove)
 
     options:
         --foo
-    ___ usage$ ___
+    ___ usage, sub, $ ___ en_US ___
 
         multi line:
           One line.
@@ -25,6 +25,9 @@ require('proof')(10, prove)
 
         main message:
           This is the main message: %s => %d.
+
+        delimiteresque:
+          ___ usage, sub, $ ___ en_US ___
 
         named parameters(key, value):
           Here are some named parameters: %s => %d && %d.
@@ -39,7 +42,7 @@ require('proof')(10, prove)
 
     options:
         --foo
-    ___ usage ___
+    ___ ___ ___
 
 */
 
@@ -56,6 +59,9 @@ function prove (assert) {
     }, 'string found')
     assert(dictionary.getString('en_US', [ 'usage', 'foo' ], 'main message'), null, 'string path not found')
     assert(dictionary.getString('en_US', [ 'usage', 'sub' ], 'x'), null, 'string not found')
+    assert(dictionary.getString('en_US', [ 'usage', 'sub' ], 'delimiteresque'),
+          { text: '___ usage, sub, $ ___ en_US ___', order: [ 1 ] },
+          'ignore delimiter if indented')
     assert(dictionary.getString('en_US', [ 'usage', 'sub' ], 'named parameters'), {
         text: 'Here are some named parameters: %s => %d && %d.',
         order: [ 'key', 'value' ]
@@ -68,4 +74,6 @@ function prove (assert) {
     ]), 'This is the main message: a => 1.', 'format')
     assert(dictionary.format('en_US', [ 'usage', 'sub' ], 'main message', 'a', 1),
         'This is the main message: a => 1.', 'format')
+    assert(dictionary.getString('fr_FR', [ 'usage', 'sub' ], 'x'), null, 'language not found')
+    assert(dictionary.getText('en_GB', [ 'usage' ]), usage, 'last entry')
 }
