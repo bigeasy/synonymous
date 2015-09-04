@@ -21,7 +21,6 @@
     },
     "dependencies":
     {
-                        "abend":                "0.0.0",
                         "sprintf":              "0.1.5"
     },
     "devDependencies":
