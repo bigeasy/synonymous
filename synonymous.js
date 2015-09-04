@@ -119,8 +119,11 @@ Dictionary.prototype.getText = function (language, path) {
 }
 
 Dictionary.prototype.getString = function (language, path, key) {
-    var branch = this._getBranch(language, path)
-    return branch.strings[key] || null
+    return this._getBranch(language, path).strings[key]
+}
+
+Dictionary.prototype.getKeys = function (language, path) {
+    return Object.keys(this._getBranch(language, path).branches)
 }
 
 Dictionary.prototype.format = function (language, path, key) {
