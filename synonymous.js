@@ -34,9 +34,12 @@ function strings (strings, lines) {
     return strings
 }
 
-function createDictionary (source) {
+function Dictionary () {
+    this._languages = { order: [], branch: {} }
+}
+
+Dictionary.prototype.load = function (source) {
     var $
-    var dictionary = new Dictionary
     var lines = source.split(/\r?\n/)
     var areStrings
     var text
@@ -49,7 +52,10 @@ function createDictionary (source) {
                     continue
                 }
                 languages.forEach(function (language) {
-                    var branch = dictionary._getBranch(language, vargs, true)
+                    if (this._languages.order.indexOf(language) == -1) {
+                        this._languages.order.push(language)
+                    }
+                    var branch = this._getBranch(language, vargs, true)
                     if (areStrings) {
                         strings(branch.strings, text)
                     } else {
@@ -79,18 +85,17 @@ function createDictionary (source) {
             text.push(lines[i].substring(indent))
         }
     }
-    return dictionary
 }
 
-function Dictionary () {
-    this._languages = {}
+Dictionary.prototype.getLanguages = function () {
+    return this._languages.order.slice()
 }
 
 Dictionary.prototype._getBranch = function (language, path, create) {
-    var branch = this._languages[language], child
+    var branch = this._languages.branch[language], child
     if (!branch) {
         if (create) {
-            branch = this._languages[language] = { branches: {}, name: language }
+            branch = this._languages.branch[language] = { branches: {}, name: language }
         } else {
             return { body: null, strings: {} }
         }
@@ -147,4 +152,4 @@ Dictionary.prototype.format = function (language, path, key) {
     return sprintf.apply(null, [ string.text].concat(args))
 }
 
-module.exports = createDictionary
+module.exports = Dictionary

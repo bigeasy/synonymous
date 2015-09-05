@@ -4,7 +4,7 @@ usage: synonymous <options> file1 file2\n\
 options:\n\
     --foo'
 
-require('proof')(15, prove)
+require('proof')(16, prove)
 
 /*
 
@@ -47,10 +47,11 @@ require('proof')(15, prove)
 */
 
 function prove (assert) {
-    var synonymous = require('../..')
+    var Dictionary = require('../..')
     var fs = require('fs')
     var source = fs.readFileSync(__filename, 'utf8')
-    var dictionary = synonymous(source)
+    var dictionary = new Dictionary
+    dictionary.load(source)
     assert(dictionary.getText('en_US', [ 'usage', 'sub' ]), usage, 'text')
     assert(dictionary.getText('en_US', [ 'usage', 'string with "' ]), 'x', 'double quoted text')
     assert(dictionary.getText('en_US', [ 'usage', 'foo' ]), null, 'text not found')
@@ -78,4 +79,5 @@ function prove (assert) {
     assert(dictionary.getText('en_GB', [ 'usage' ]), usage, 'last entry')
     assert(dictionary.getKeys('en_US', []), [ 'usage' ], 'root keys')
     assert(dictionary.getKeys('en_US', [ 'usage' ]), [ 'sub', 'string with "' ], 'keys')
+    assert(dictionary.getLanguages(), [ 'en_US', 'en_GB' ], 'get languages')
 }
