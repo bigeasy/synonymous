@@ -95,7 +95,11 @@ Dictionary.prototype._getBranch = function (language, path, create) {
     var branch = this._languages.branch[language], child
     if (!branch) {
         if (create) {
-            branch = this._languages.branch[language] = { branches: {}, name: language }
+            branch = this._languages.branch[language] = {
+                branches: {},
+                name: language,
+                strings: {}
+            }
         } else {
             return { body: null, strings: {} }
         }
