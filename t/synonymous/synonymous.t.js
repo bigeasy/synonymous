@@ -4,7 +4,7 @@ usage: synonymous <options> file1 file2\n\
 options:\n\
     --foo'
 
-require('proof')(16, prove)
+require('proof')(17, prove)
 
 /*
 
@@ -75,6 +75,7 @@ function prove (assert) {
     ]), 'This is the main message: a => 1.', 'format')
     assert(dictionary.format('en_US', [ 'usage', 'sub' ], 'main message', 'a', 1),
         'This is the main message: a => 1.', 'format')
+    assert(dictionary.format('en_US', [ 'usage', 'sub' ], 'missing message', []), null, 'missing message')
     assert(dictionary.getString('fr_FR', [ 'usage', 'sub' ], 'x'), null, 'language not found')
     assert(dictionary.getText('en_GB', [ 'usage' ]), usage, 'last entry')
     assert(dictionary.getKeys('en_US', []), [ 'usage' ], 'root keys')

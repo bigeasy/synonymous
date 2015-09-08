@@ -138,6 +138,9 @@ Dictionary.prototype.getKeys = function (language, path) {
 Dictionary.prototype.format = function (language, path, key) {
     var vargs = slice.call(arguments, 3), args, keys
     var string = this.getString(language, path, key)
+    if (!string) {
+        return null
+    }
     if (typeof vargs[0] === 'object') {
         vargs = vargs[0]
     }
