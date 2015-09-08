@@ -45,7 +45,7 @@ Dictionary.prototype.load = function (source) {
     var text
     for (var i = 0, I = lines.length; i < I; i++) {
         if ($ = DELIMITER.exec(lines[i])) {
-            var spaces = $[1] || $[4], terminator = !! $[4]
+            var spaces = $[1] == null ? $[4] : $[1], terminator = $[4] != null
             if (text) {
                 if (spaces.length > indent) {
                     text.push(lines[i].substring(indent))
