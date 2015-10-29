@@ -42,7 +42,7 @@ require('proof')(17, prove)
 
     options:
         --foo
-    ___ ___ ___
+    ___ . ___
 
 */
 
