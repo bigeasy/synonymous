@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>synonymous.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+
+    <ul class="sections">
+
+          <li id="title">
+              <div class="annotation">
+                  <h1>synonymous.js</h1>
+              </div>
+          </li>
+
+
+
+        <li id="section-1">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> sprintf = <span class="hljs-built_in">require</span>(<span class="hljs-string">'sprintf'</span>)
+<span class="hljs-keyword">var</span> slice = [].slice
+<span class="hljs-keyword">var</span> assert = <span class="hljs-built_in">require</span>(<span class="hljs-string">'assert'</span>)
+
+<span class="hljs-keyword">var</span> STRING = <span class="hljs-regexp">/^(\s*)([^:(]+)(?:\((\d+(?:\s*,\s*\d+)*)\)|\((\w[\w\d]*(?:\s*,\s*\w[\w\d]*)*)\))?:\s*(.*)$/</span>
+<span class="hljs-keyword">var</span> DELIMITER = <span class="hljs-regexp">/^(?:(\s*)___\s+((?:\d+|\w[\w\d]+|\$)(?:\s*,\s*(?:\d+|[\w\d]+|"(?:[^"\\]*(?:\\.[^"\\]*)*)"|\$))*)\s+___\s+((?:[a-z]{2}_[A-Z]{2})(?:\s*,\s*[a-z]{2}_[A-Z]{2})*)\s+___\s*|(\s*)___\s+\.\s+___\s*)$/</span>
+<span class="hljs-keyword">var</span> PARAMETER = <span class="hljs-regexp">/^(?:(\w[\w\d]+|\$)|("(?:[^"\\]*(?:\\.[^"\\]*)*)"))\s*(?:,\s*(.*))?$/</span></pre></div></div>
+
+        </li>
+
+
+        <li id="section-2">
+            <div class="annotation">
+
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Extract message strings from the strings section of a usage message.</p>
+
+            </div>
+
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">strings</span> (<span class="hljs-params">strings, lines</span>) </span>{
+    <span class="hljs-keyword">var</span> i, I, j, J, $, spaces, key, order, line, message = [], dedent = <span class="hljs-built_in">Number</span>.MAX_VALUE
+
+    OUTER: <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>, I = lines.length; i &lt; I; i++) {
+        <span class="hljs-keyword">if</span> (($ = STRING.exec(lines[i]))) {
+            spaces = $[<span class="hljs-number">1</span>].length, key = $[<span class="hljs-number">2</span>].trim(), order = $[<span class="hljs-number">3</span>] || $[<span class="hljs-number">4</span>] || <span class="hljs-string">'1'</span>, line = $[<span class="hljs-number">5</span>], message = []
+            <span class="hljs-keyword">if</span> (line.length) message.push(line)
+            <span class="hljs-keyword">for</span> (i++; i &lt; I; i++) {
+                <span class="hljs-keyword">if</span> (<span class="hljs-regexp">/\S/</span>.test(lines[i])) {
+                    $ = <span class="hljs-regexp">/^(\s*)(.*)$/</span>.exec(lines[i])
+                    <span class="hljs-keyword">if</span> ($[<span class="hljs-number">1</span>].length &lt;= spaces) <span class="hljs-keyword">break</span>
+                    dedent = <span class="hljs-built_in">Math</span>.min($[<span class="hljs-number">1</span>].length, dedent)
+                }
+                message.push(lines[i])
+            }
+            <span class="hljs-keyword">for</span> (j = line.length ? <span class="hljs-number">1</span> : <span class="hljs-number">0</span>, J = message.length; j &lt; J; j++) {
+                message[j] = message[j].substring(dedent)
+            }
+            <span class="hljs-keyword">if</span> (message[message.length - <span class="hljs-number">1</span>] == <span class="hljs-string">''</span>) message.pop()
+            strings[key] = { <span class="hljs-attr">text</span>: message.join(<span class="hljs-string">'\n'</span>), <span class="hljs-attr">order</span>: order.split(<span class="hljs-regexp">/\s*,\s*/</span>) }
+            i--
+        }
+    }
+
+    <span class="hljs-keyword">return</span> strings
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Dictionary</span> (<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">this</span>._languages = { <span class="hljs-attr">order</span>: [], <span class="hljs-attr">branch</span>: {} }
+}
+
+Dictionary.prototype.load = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">source</span>) </span>{
+    <span class="hljs-keyword">var</span> $
+    <span class="hljs-keyword">var</span> lines = source.split(<span class="hljs-regexp">/\r?\n/</span>)
+    <span class="hljs-keyword">var</span> areStrings
+    <span class="hljs-keyword">var</span> text
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>, I = lines.length; i &lt; I; i++) {
+        <span class="hljs-keyword">if</span> ($ = DELIMITER.exec(lines[i])) {
+            <span class="hljs-keyword">var</span> spaces = $[<span class="hljs-number">1</span>] == <span class="hljs-literal">null</span> ? $[<span class="hljs-number">4</span>] : $[<span class="hljs-number">1</span>], terminator = $[<span class="hljs-number">4</span>] != <span class="hljs-literal">null</span>
+            <span class="hljs-keyword">if</span> (text) {
+                <span class="hljs-keyword">if</span> (spaces.length &gt; indent) {
+                    text.push(lines[i].substring(indent))
+                    <span class="hljs-keyword">continue</span>
+                }
+                languages.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">language</span>) </span>{
+                    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>._languages.order.indexOf(language) == <span class="hljs-number">-1</span>) {
+                        <span class="hljs-keyword">this</span>._languages.order.push(language)
+                    }
+                    <span class="hljs-keyword">var</span> branch = <span class="hljs-keyword">this</span>._getBranch(language, vargs, <span class="hljs-literal">true</span>)
+                    <span class="hljs-keyword">if</span> (areStrings) {
+                        strings(branch.strings, text)
+                    } <span class="hljs-keyword">else</span> {
+                        branch.body = text.join(<span class="hljs-string">'\n'</span>)
+                    }
+                }, <span class="hljs-keyword">this</span>)
+                indent = <span class="hljs-number">-1</span>
+                text = <span class="hljs-literal">null</span>
+            }
+            <span class="hljs-keyword">if</span> (terminator) {
+                <span class="hljs-keyword">continue</span>
+            }
+            <span class="hljs-keyword">var</span> vargs = [], indent = $[<span class="hljs-number">1</span>].length,
+                parameters = $[<span class="hljs-number">2</span>], languages = $[<span class="hljs-number">3</span>]
+            <span class="hljs-keyword">while</span> (parameters.length) {
+                $ = PARAMETER.exec(parameters)
+                vargs.push($[<span class="hljs-number">1</span>] ? $[<span class="hljs-number">1</span>] : <span class="hljs-built_in">JSON</span>.parse($[<span class="hljs-number">2</span>]))
+                parameters = $[<span class="hljs-number">3</span>] || <span class="hljs-string">''</span>
+            }
+            <span class="hljs-keyword">if</span> (areStrings = vargs[vargs.length - <span class="hljs-number">1</span>] == <span class="hljs-string">'$'</span>) {
+                vargs.pop()
+            }
+            assert(vargs.every(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">arg</span>) </span>{ <span class="hljs-keyword">return</span> arg != <span class="hljs-string">'$'</span> }), <span class="hljs-string">'invalid argument'</span>)
+            languages = languages.split(<span class="hljs-regexp">/\s*,\s*/</span>)
+            text = []
+        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (text) {
+            text.push(lines[i].substring(indent))
+        }
+    }
+}
+
+Dictionary.prototype.getLanguages = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._languages.order.slice()
+}
+
+Dictionary.prototype._getBranch = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">language, path, create</span>) </span>{
+    <span class="hljs-keyword">var</span> branch = <span class="hljs-keyword">this</span>._languages.branch[language], child
+    <span class="hljs-keyword">if</span> (!branch) {
+        <span class="hljs-keyword">if</span> (create) {
+            branch = <span class="hljs-keyword">this</span>._languages.branch[language] = {
+                <span class="hljs-attr">branches</span>: {},
+                <span class="hljs-attr">name</span>: language,
+                <span class="hljs-attr">strings</span>: {}
+            }
+        } <span class="hljs-keyword">else</span> {
+            <span class="hljs-keyword">return</span> { <span class="hljs-attr">body</span>: <span class="hljs-literal">null</span>, <span class="hljs-attr">strings</span>: {} }
+        }
+    }
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>, I = path.length; i &lt; I; i++) {
+        child = branch.branches[path[i]]
+        <span class="hljs-keyword">if</span> (!child) {
+            <span class="hljs-keyword">if</span> (create) {
+                child = branch.branches[path[i]] = {
+                    <span class="hljs-attr">name</span>: path[i],
+                    <span class="hljs-attr">branches</span>: {},
+                    <span class="hljs-attr">body</span>: <span class="hljs-literal">null</span>,
+                    <span class="hljs-attr">strings</span>: {}
+                }
+            } <span class="hljs-keyword">else</span> {
+                <span class="hljs-keyword">return</span> { <span class="hljs-attr">body</span>: <span class="hljs-literal">null</span>, <span class="hljs-attr">strings</span>: {} }
+            }
+        }
+        branch = child
+    }
+    <span class="hljs-keyword">return</span> branch
+}
+
+Dictionary.prototype.getText = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">language, path</span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._getBranch(language, path).body
+}
+
+Dictionary.prototype.getString = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">language, path, key</span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._getBranch(language, path).strings[key] || <span class="hljs-literal">null</span>
+}
+
+Dictionary.prototype.getKeys = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">language, path</span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">Object</span>.keys(<span class="hljs-keyword">this</span>._getBranch(language, path).branches)
+}
+
+Dictionary.prototype.format = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">language, path, key</span>) </span>{
+    <span class="hljs-keyword">var</span> vargs = slice.call(<span class="hljs-built_in">arguments</span>, <span class="hljs-number">3</span>), args, keys
+    <span class="hljs-keyword">var</span> string = <span class="hljs-keyword">this</span>.getString(language, path, key)
+    <span class="hljs-keyword">if</span> (!string) {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>
+    }
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> vargs[<span class="hljs-number">0</span>] === <span class="hljs-string">'object'</span>) {
+        vargs = vargs[<span class="hljs-number">0</span>]
+    }
+    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">Array</span>.isArray(vargs)) {
+        args = vargs.map(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">_, index</span>) </span>{
+            <span class="hljs-keyword">var</span> order = string.order[index] || <span class="hljs-string">''</span>
+            <span class="hljs-keyword">return</span> vargs[<span class="hljs-regexp">/^\d+$/</span>.test(order) ? order - <span class="hljs-number">1</span> : index]
+        })
+    } <span class="hljs-keyword">else</span> {
+        keys = <span class="hljs-built_in">Object</span>.keys(vargs)
+        args = keys.map(<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">_, index</span>) </span>{
+            <span class="hljs-keyword">var</span> order = string.order[index]
+            <span class="hljs-keyword">return</span> vargs[order ? order : keys[index]]
+        })
+    }
+    <span class="hljs-keyword">return</span> sprintf.apply(<span class="hljs-literal">null</span>, [ string.text].concat(args))
+}
+
+<span class="hljs-built_in">module</span>.exports = Dictionary</pre></div></div>
+
+        </li>
+
+    </ul>
+  </div>
+</body>
+</html>
