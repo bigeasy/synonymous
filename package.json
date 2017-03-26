@@ -1,34 +1,36 @@
 {
-    "name":             "synonymous",
-    "version":          "1.0.1",
-    "author":           "Alan Gutierrez <alan@prettyrobots.com>",
-    "description":      "Minimalist i81n.",
+    "name":                 "synonymous",
+    "version":              "1.0.1",
+    "description":
+
+      "Minimalist i81n.",
+
     "keywords":
     [
-                        "internationalization", "localization", "i18n", "i10n",
-                        "strings"
+                            "internationalization", "localization", "i18n",
+                            "i10n", "strings"
     ],
-    "main":             "synonymous",
-    "contributors":     [],
-    "homepage":         "https://github.com/bigeasy/synonymous",
-    "bugs":             "https://github.com/bigeasy/synonymous/issues",
-    "license":          "MIT",
-    "main":             "synonymous",
+    "author":               "Alan Gutierrez <alan@prettyrobots.com>",
+    "contributors":         [],
+    "homepage":             "https://github.com/bigeasy/synonymous",
+    "bugs":                 "https://github.com/bigeasy/synonymous/issues",
+    "license":              "MIT",
     "repository":
     {
-                        "type": "git",
-                        "url": "http://github.com/bigeasy/synonymous.git"
+                            "type": "git",
+                            "url": "http://github.com/bigeasy/synonymous.git"
     },
     "dependencies":
     {
-                        "sprintf":              "0.1.5"
+                            "sprintf":                      "0.1.5"
     },
     "devDependencies":
     {
-                        "proof":                "1.2.x"
+                            "proof":                        "1.2.x"
     },
+    "main":                 "synonymous",
     "scripts":
     {
-                        "test": "proof platform win32 && proof test */*/*.t.js || t/test"
+                            "test": "proof platform win32 && proof test */*/*.t.js || t/test"
     }
 }
