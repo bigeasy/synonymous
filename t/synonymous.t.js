@@ -47,7 +47,7 @@ require('proof')(17, prove)
 */
 
 function prove (assert) {
-    var Dictionary = require('../..')
+    var Dictionary = require('..')
     var fs = require('fs')
     var source = fs.readFileSync(__filename, 'utf8')
     var dictionary = new Dictionary
