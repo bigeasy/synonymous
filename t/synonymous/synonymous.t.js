@@ -55,13 +55,14 @@ function prove (assert) {
     assert(dictionary.getText('en_US', [ 'usage', 'sub' ]), usage, 'text')
     assert(dictionary.getText('en_US', [ 'usage', 'string with "' ]), 'x', 'double quoted text')
     assert(dictionary.getText('en_US', [ 'usage', 'foo' ]), null, 'text not found')
+    // TODO Probably should convert order to integers.
     assert(dictionary.getString('en_US', [ 'usage', 'sub' ], 'main message'), {
         text: 'This is the main message: %s => %d.', order: [ '1' ]
     }, 'string found')
     assert(dictionary.getString('en_US', [ 'usage', 'foo' ], 'main message'), null, 'string path not found')
     assert(dictionary.getString('en_US', [ 'usage', 'sub' ], 'x'), null, 'string not found')
     assert(dictionary.getString('en_US', [ 'usage', 'sub' ], 'delimiteresque'),
-          { text: '___ usage, sub, $ ___ en_US ___', order: [ 1 ] },
+          { text: '___ usage, sub, $ ___ en_US ___', order: [ '1' ] },
           'ignore delimiter if indented')
     assert(dictionary.getString('en_US', [ 'usage', 'sub' ], 'named parameters'), {
         text: 'Here are some named parameters: %s => %d && %d.',
