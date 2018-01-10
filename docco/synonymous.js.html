@@ -36,7 +36,9 @@
 
 <span class="hljs-keyword">var</span> STRING = <span class="hljs-regexp">/^(\s*)([^:(]+)(?:\((\d+(?:\s*,\s*\d+)*)\)|\((\w[\w\d]*(?:\s*,\s*\w[\w\d]*)*)\))?:\s*(.*)$/</span>
 <span class="hljs-keyword">var</span> DELIMITER = <span class="hljs-regexp">/^(?:(\s*)___\s+((?:\d+|\w[\w\d]+|\$)(?:\s*,\s*(?:\d+|[\w\d]+|"(?:[^"\\]*(?:\\.[^"\\]*)*)"|\$))*)\s+___\s+((?:[a-z]{2}_[A-Z]{2})(?:\s*,\s*[a-z]{2}_[A-Z]{2})*)\s+___\s*|(\s*)___\s+\.\s+___\s*)$/</span>
-<span class="hljs-keyword">var</span> PARAMETER = <span class="hljs-regexp">/^(?:(\w[\w\d]+|\$)|("(?:[^"\\]*(?:\\.[^"\\]*)*)"))\s*(?:,\s*(.*))?$/</span></pre></div></div>
+<span class="hljs-keyword">var</span> PARAMETER = <span class="hljs-regexp">/^(?:(\w[\w\d]+|\$)|("(?:[^"\\]*(?:\\.[^"\\]*)*)"))\s*(?:,\s*(.*))?$/</span>
+
+</pre></div></div>
 
         </li>
 
@@ -203,7 +205,9 @@ Dictionary.prototype.format = <span class="hljs-function"><span class="hljs-keyw
     <span class="hljs-keyword">return</span> sprintf.apply(<span class="hljs-literal">null</span>, [ string.text].concat(args))
 }
 
-<span class="hljs-built_in">module</span>.exports = Dictionary</pre></div></div>
+<span class="hljs-built_in">module</span>.exports = Dictionary
+
+</pre></div></div>
 
         </li>
 
