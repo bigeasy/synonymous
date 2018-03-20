@@ -1,4 +1,4 @@
-var sprintf = require('sprintf')
+var sprintf = require('sprintf-js')
 var slice = [].slice
 var assert = require('assert')
 
