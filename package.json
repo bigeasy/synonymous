@@ -22,7 +22,7 @@
     },
     "dependencies":
     {
-                            "sprintf":                      "0.1.5"
+                            "sprintf-js":                   "1.1.1"
     },
     "devDependencies":
     {
