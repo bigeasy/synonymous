@@ -1,0 +1,8 @@
+/.*
+/*.md
+/*.regex
+/*.sh
+/coverage
+/docs
+/node_modules
+/t
