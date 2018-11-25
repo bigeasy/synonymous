@@ -46,40 +46,40 @@ require('proof')(17, prove)
 
 */
 
-function prove (assert) {
+function prove (okay) {
     var Dictionary = require('..')
     var fs = require('fs')
     var source = fs.readFileSync(__filename, 'utf8')
     var dictionary = new Dictionary
     dictionary.load(source)
-    assert(dictionary.getText('en_US', [ 'usage', 'sub' ]), usage, 'text')
-    assert(dictionary.getText('en_US', [ 'usage', 'string with "' ]), 'x', 'double quoted text')
-    assert(dictionary.getText('en_US', [ 'usage', 'foo' ]), null, 'text not found')
+    okay(dictionary.getText('en_US', [ 'usage', 'sub' ]), usage, 'text')
+    okay(dictionary.getText('en_US', [ 'usage', 'string with "' ]), 'x', 'double quoted text')
+    okay(dictionary.getText('en_US', [ 'usage', 'foo' ]), null, 'text not found')
     // TODO Probably should convert order to integers.
-    assert(dictionary.getString('en_US', [ 'usage', 'sub' ], 'main message'), {
+    okay(dictionary.getString('en_US', [ 'usage', 'sub' ], 'main message'), {
         text: 'This is the main message: %s => %d.', order: [ '1' ]
     }, 'string found')
-    assert(dictionary.getString('en_US', [ 'usage', 'foo' ], 'main message'), null, 'string path not found')
-    assert(dictionary.getString('en_US', [ 'usage', 'sub' ], 'x'), null, 'string not found')
-    assert(dictionary.getString('en_US', [ 'usage', 'sub' ], 'delimiteresque'),
+    okay(dictionary.getString('en_US', [ 'usage', 'foo' ], 'main message'), null, 'string path not found')
+    okay(dictionary.getString('en_US', [ 'usage', 'sub' ], 'x'), null, 'string not found')
+    okay(dictionary.getString('en_US', [ 'usage', 'sub' ], 'delimiteresque'),
           { text: '___ usage, sub, $ ___ en_US ___', order: [ '1' ] },
           'ignore delimiter if indented')
-    assert(dictionary.getString('en_US', [ 'usage', 'sub' ], 'named parameters'), {
+    okay(dictionary.getString('en_US', [ 'usage', 'sub' ], 'named parameters'), {
         text: 'Here are some named parameters: %s => %d && %d.',
         order: [ 'key', 'value' ]
     }, 'string not found')
-    assert(dictionary.format('en_US', [ 'usage', 'sub' ], 'named parameters', {
+    okay(dictionary.format('en_US', [ 'usage', 'sub' ], 'named parameters', {
         key: 'a', value: 1, fred: 2
     }), 'Here are some named parameters: a => 1 && 2.', 'format')
-    assert(dictionary.format('en_US', [ 'usage', 'sub' ], 'main message', [
+    okay(dictionary.format('en_US', [ 'usage', 'sub' ], 'main message', [
         'a', 1
     ]), 'This is the main message: a => 1.', 'format')
-    assert(dictionary.format('en_US', [ 'usage', 'sub' ], 'main message', 'a', 1),
+    okay(dictionary.format('en_US', [ 'usage', 'sub' ], 'main message', 'a', 1),
         'This is the main message: a => 1.', 'format')
-    assert(dictionary.format('en_US', [ 'usage', 'sub' ], 'missing message', []), null, 'missing message')
-    assert(dictionary.getString('fr_FR', [ 'usage', 'sub' ], 'x'), null, 'language not found')
-    assert(dictionary.getText('en_GB', [ 'usage' ]), usage, 'last entry')
-    assert(dictionary.getKeys('en_US', []), [ 'usage' ], 'root keys')
-    assert(dictionary.getKeys('en_US', [ 'usage' ]), [ 'sub', 'string with "' ], 'keys')
-    assert(dictionary.getLanguages(), [ 'en_US', 'en_GB' ], 'get languages')
+    okay(dictionary.format('en_US', [ 'usage', 'sub' ], 'missing message', []), null, 'missing message')
+    okay(dictionary.getString('fr_FR', [ 'usage', 'sub' ], 'x'), null, 'language not found')
+    okay(dictionary.getText('en_GB', [ 'usage' ]), usage, 'last entry')
+    okay(dictionary.getKeys('en_US', []), [ 'usage' ], 'root keys')
+    okay(dictionary.getKeys('en_US', [ 'usage' ]), [ 'sub', 'string with "' ], 'keys')
+    okay(dictionary.getLanguages(), [ 'en_US', 'en_GB' ], 'get languages')
 }
