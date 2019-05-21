@@ -30,6 +30,6 @@
     "main":                 "synonymous",
     "scripts":
     {
-                            "test": "proof test test/*.t.js"
+                            "test": "mocha"
     }
 }
