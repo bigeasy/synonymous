@@ -1,19 +1,20 @@
-Ascension
+[![Actions Status](https://github.com/bigeasy/synonymous/workflows/Node%20CI/badge.svg)](https://github.com/bigeasy/synonymous/actions)
+[![codecov](https://codecov.io/gh/bigeasy/synonymous/branch/master/graph/badge.svg)](https://codecov.io/gh/bigeasy/synonymous)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Minimalist i18n.
 
-    Discussion:     https://github.com/bigeasy/synonymous/issues/1
+| What          | Where                                             |
+| --- | --- |
+| Discussion    | https://github.com/bigeasy/synonymous/issues/1    |
+| Documentation | https://bigeasy.github.io/synonymous              |
+| Source        | https://github.com/bigeasy/synonymous             |
+| Issues        | https://github.com/bigeasy/synonymous/issues      |
+| CI            | https://travis-ci.org/bigeasy/synonymous          |
+| Coverage:     | https://codecov.io/gh/bigeasy/synonymous          |
+| License:      | MIT                                               |
 
-    Documentation:  https://bigeasy.github.io/synonymous
-    Source:         https://github.com/bigeasy/synonymous
-    Issues:         https://github.com/bigeasy/synonymous/issues
-    CI:             https://travis-ci.org/bigeasy/synonymous
-    Coverage:       https://coveralls.io/github/bigeasy/synonymous
 
-    Install:        `npm install synonymous`
-
-    License:        MIT
-
-To learn everything you want to know about Ascension start here:
-
-    http://bigeasy.github.io/synonymous
+```
+npm install synonymous
+```
