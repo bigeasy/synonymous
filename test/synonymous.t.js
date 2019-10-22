@@ -44,8 +44,7 @@ options:
 */
 require('proof')(17, (okay) => {
     const Dictionary = require('..')
-    const fs = require('fs')
-    const source = fs.readFileSync(__filename, 'utf8')
+    const source = require('fs').readFileSync(__filename, 'utf8')
     const dictionary = new Dictionary
     dictionary.load(source)
     okay(dictionary.getText('en_US', [ 'usage', 'sub' ]), usage, 'text')
