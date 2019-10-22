@@ -1,8 +1,7 @@
-var usage = '\
-usage: synonymous <options> file1 file2\n\
-\n\
-options:\n\
-    --foo'
+var usage = `usage: synonymous <options> file1 file2
+
+options:
+    --foo`
 
 /*
 
