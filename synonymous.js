@@ -1,5 +1,4 @@
 const sprintf = require('sprintf-js').sprintf
-var slice = [].slice
 const assert = require('assert')
 
 const STRING = /^(\s*)([^:(]+)(?:\((\d+(?:\s*,\s*\d+)*)\)|\((\w[\w\d]*(?:\s*,\s*\w[\w\d]*)*)\))?:\s*(.*)$/
